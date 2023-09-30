@@ -3,6 +3,7 @@ package initializers
 import (
 	"fmt"
 	"github.com/timescale/tsbs/pkg/targets"
+	arcadetsdb "github.com/timescale/tsbs/pkg/targets/acradetsdb"
 	"github.com/timescale/tsbs/pkg/targets/akumuli"
 	"github.com/timescale/tsbs/pkg/targets/cassandra"
 	"github.com/timescale/tsbs/pkg/targets/clickhouse"
@@ -45,6 +46,8 @@ func GetTarget(format string) targets.ImplementedTarget {
 		return timestream.NewTarget()
 	case constants.FormatQuestDB:
 		return questdb.NewTarget()
+	case constants.FormatArcadeTSDB:
+		return arcadetsdb.NewTarget()
 	}
 
 	supportedFormatsStr := strings.Join(constants.SupportedFormats(), ",")
