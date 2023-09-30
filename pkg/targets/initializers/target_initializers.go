@@ -3,8 +3,8 @@ package initializers
 import (
 	"fmt"
 	"github.com/timescale/tsbs/pkg/targets"
-	arcadetsdb "github.com/timescale/tsbs/pkg/targets/acradetsdb"
 	"github.com/timescale/tsbs/pkg/targets/akumuli"
+	arcadetsdb "github.com/timescale/tsbs/pkg/targets/arcadetsdb"
 	"github.com/timescale/tsbs/pkg/targets/cassandra"
 	"github.com/timescale/tsbs/pkg/targets/clickhouse"
 	"github.com/timescale/tsbs/pkg/targets/constants"
