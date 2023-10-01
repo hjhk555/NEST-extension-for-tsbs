@@ -1,33 +1,55 @@
 package arcadetsdb
 
 import (
+	"github.com/timescale/tsbs/internal/inputs"
+	"github.com/timescale/tsbs/pkg/data/source"
 	"github.com/timescale/tsbs/pkg/targets"
 )
 
 type benchmark struct {
+	dbName     string
+	host       string
+	port       int
+	dataSource targets.DataSource
+}
+
+func newBenchmark(targetDB string, dataSourceConfig *source.DataSourceConfig, specificConfig *SpecificConfig) (targets.Benchmark, error) {
+	var ds targets.DataSource
+	if dataSourceConfig.Type == source.FileDataSourceType {
+		panic("FILE data source not supported yet")
+	} else {
+		dataGenerator := &inputs.DataGenerator{}
+		simulator, err := dataGenerator.CreateSimulator(dataSourceConfig.Simulator)
+		if err != nil {
+			return nil, err
+		}
+		ds = newSimulationDataSource(simulator)
+	}
+	return benchmark{
+		dbName:     targetDB,
+		host:       specificConfig.host,
+		port:       specificConfig.port,
+		dataSource: ds,
+	}, nil
 }
 
 func (b benchmark) GetDataSource() targets.DataSource {
-	//TODO implement me
-	panic("implement me")
+	return b.dataSource
 }
 
 func (b benchmark) GetBatchFactory() targets.BatchFactory {
-	//TODO implement me
-	panic("implement me")
+	return newBatchFactory()
 }
 
 func (b benchmark) GetPointIndexer(maxPartitions uint) targets.PointIndexer {
-	//TODO implement me
-	panic("implement me")
+	//TODO look into point indexer
+	return &targets.ConstantIndexer{}
 }
 
 func (b benchmark) GetProcessor() targets.Processor {
-	//TODO implement me
-	panic("implement me")
+	return newProcessor(b.dbName, b.host, b.port)
 }
 
 func (b benchmark) GetDBCreator() targets.DBCreator {
-	//TODO implement me
-	return &dbCreator{}
+	return newDBCreator(b.host, b.port)
 }

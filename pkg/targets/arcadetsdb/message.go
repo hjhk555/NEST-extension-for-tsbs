@@ -1,25 +1,28 @@
 package arcadetsdb
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type IClientMessage interface {
 	GetJsonMessage() ([]byte, error)
 }
 
-type ClientMessage struct {
+type clientMessage struct {
 	Database string `json:"db,omitempty"`
 	Action   string `json:"act"`
 }
 
 type ManageMessage struct {
-	ClientMessage
+	clientMessage
 	ManageType string `json:"typ"`
 }
 
 type InsertMessage struct {
-	ClientMessage
-	Strategies []InsertStrategy `json:"stg,omitempty"`
-	Inserts    []InsertDetail   `json:"ins"`
+	clientMessage
+	Strategies []*InsertStrategy `json:"stg,omitempty"`
+	Inserts    []*InsertDetail   `json:"ins"`
 }
 
 type InsertStrategy struct {
@@ -28,19 +31,19 @@ type InsertStrategy struct {
 }
 
 type InsertDetail struct {
-	ObjectType string               `json:"obj"`
-	Tags       map[string]string    `json:"tag,omitempty"`
-	Metrics    map[string]TimeValue `json:"ts"`
+	ObjectType string                 `json:"obj"`
+	Tags       *map[string]string     `json:"tag,omitempty"`
+	Metrics    *map[string]*TimeValue `json:"ts"`
 }
 
 type TimeValue struct {
-	Timestamps []int64       `json:"t"`
-	Values     []interface{} `json:"v"`
+	Timestamps *[]int64       `json:"t"`
+	Values     *[]interface{} `json:"v"`
 }
 
 type QueryMessage struct {
-	ClientMessage
-	Query QueryDetail `json:"qry"`
+	clientMessage
+	Query *QueryDetail `json:"qry"`
 }
 
 type QueryDetail struct {
@@ -57,7 +60,7 @@ type QueryDetail struct {
 type ServerMessage struct {
 	Success bool        `json:"suc"`
 	Result  interface{} `json:"res"`
-	Error   Error       `json:"err"`
+	Error   *Error      `json:"err"`
 }
 
 type Error struct {
@@ -78,4 +81,16 @@ func (i InsertMessage) GetJsonMessage() ([]byte, error) {
 func (q QueryMessage) GetJsonMessage() ([]byte, error) {
 	q.Action = "query"
 	return json.Marshal(q)
+}
+
+func (s *ServerMessage) GetResult() (interface{}, error) {
+	if s.Success {
+		res := s.Result
+		if res == nil {
+			return true, nil
+		}
+		return res, nil
+	} else {
+		return nil, fmt.Errorf("%s:%s", s.Error.ClassName, s.Error.Message)
+	}
 }
