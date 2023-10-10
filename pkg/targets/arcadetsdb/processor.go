@@ -37,11 +37,11 @@ func (p *processor) ProcessBatch(b targets.Batch, _ bool) (metricCount, rowCount
 		panic(err)
 	}
 
-	mtcCnt := uint64(len(insertBatch.inserts))
-	var rowCnt uint64
-	rowCnt = 0
+	rowCnt := uint64(len(insertBatch.inserts))
+	var mtcCnt uint64
+	mtcCnt = 0
 	for _, insert := range insertBatch.inserts {
-		rowCnt += uint64(len(*(insert.Metrics)))
+		mtcCnt += uint64(len(*(insert.Metrics)))
 	}
 	return mtcCnt, rowCnt
 }

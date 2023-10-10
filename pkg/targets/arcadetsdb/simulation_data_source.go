@@ -27,39 +27,12 @@ func (s *simulationDataSource) NextItem() data.LoadedPoint {
 		// no more points
 		return data.LoadedPoint{}
 	}
-	// trans point to InsertDetail
-	tagMap := make(map[string]string)
-	fieldMap := make(map[string]*TimeValue)
 
-	tagKeys := point.TagKeys()
-	tagValues := point.TagValues()
-	fieldKeys := point.FieldKeys()
-	fieldValues := point.FieldValues()
-
-	timestamp := point.Timestamp().UnixNano()
-	timeList := make([]int64, 1)
-	timeList[0] = timestamp
-
-	for i := range tagKeys {
-		tagMap[string(tagKeys[i])] = tagValues[i].(string)
-	}
-	for i := range fieldKeys {
-		valueList := make([]interface{}, 1)
-		valueList[0] = fieldValues[i]
-		fieldMap[string(fieldKeys[i])] = &TimeValue{
-			Timestamps: &timeList,
-			Values:     &valueList,
-		}
-	}
 	return data.LoadedPoint{
-		Data: &InsertDetail{
-			ObjectType: string(point.MeasurementName()),
-			Tags:       &tagMap,
-			Metrics:    &fieldMap,
-		},
+		Data: GetInsertDetail(point),
 	}
 }
 
 func (s *simulationDataSource) Headers() *common.GeneratedDataHeaders {
-	return s.simulator.Headers()
+	panic("arcadetsdb contains no headers")
 }

@@ -21,8 +21,7 @@ func (a arcadetsdbTarget) Benchmark(targetDB string, dataSourceConfig *source.Da
 }
 
 func (a arcadetsdbTarget) Serializer() serialize.PointSerializer {
-	//TODO implement me
-	panic("implement me")
+	return &serializer{}
 }
 
 func (a arcadetsdbTarget) TargetSpecificFlags(flagPrefix string, flagSet *pflag.FlagSet) {

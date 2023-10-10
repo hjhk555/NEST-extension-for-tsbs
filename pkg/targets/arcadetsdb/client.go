@@ -54,7 +54,11 @@ func (c *Client) SendMsgAndWaitRet(msg IClientMessage) (ret *ServerMessage, err 
 		return nil, err
 	}
 
-	_, err = c.conn.Write(append(jsonMsg, '\n'))
+	return c.SendBytesAndWaitRet(jsonMsg)
+}
+
+func (c *Client) SendBytesAndWaitRet(bytes []byte) (ret *ServerMessage, err error) {
+	_, err = c.conn.Write(append(bytes, '\n'))
 	if err != nil {
 		return nil, err
 	}
